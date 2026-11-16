@@ -1,0 +1,41 @@
+#include <FastLED.main.h> // Or <FastLED.h> depending on your FastLED installation
+#include <FastLED.h>
+
+#define LED_PIN     38        // Onboard WS2812 data pin for T-Embed CC1101
+#define NUM_LEDS    8         // Total onboard WS2812 LEDs
+#define BRIGHTNESS  40        // Keeps it comfortable (0-255)
+#define LED_TYPE    WS2812
+#define COLOR_ORDER GRB
+
+CRGB leds[NUM_LEDS];
+
+void setup() {
+  Serial.begin(115200);
+  delay(500);
+  Serial.println("[*] Initializing T-Embed True-to-Life LEDs...");
+
+  // Initialize FastLED library for the onboard strip
+  FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
+  FastLED.setBrightness(BRIGHTNESS);
+}
+
+void loop() {
+  // "True-to-life" warm natural light simulation (Soft Warm White / Sunlight look)
+  // CRGB(Red, Green, Blue) -> Adjusted for a balanced, realistic ambient glow
+  CRGB naturalWarmWhite = CRGB(255, 180, 100); 
+
+  // Gentle breathing / pulsing effect to look organic
+  for (int brightness = 15; brightness < 90; brightness++) {
+    FastLED.setBrightness(brightness);
+    fill_solid(leds, NUM_LEDS, naturalWarmWhite);
+    FastLED.show();
+    delay(25);
+  }
+
+  for (int brightness = 90; brightness >= 15; brightness--) {
+    FastLED.setBrightness(brightness);
+    fill_solid(leds, NUM_LEDS, naturalWarmWhite);
+    FastLED.show();
+    delay(25);
+  }
+}
